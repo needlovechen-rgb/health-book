@@ -7,7 +7,6 @@ export default function MemberSelector() {
     members, currentMemberId, currentMember, records,
     addMember, renameMember, deleteMember, switchMember,
     importRecords, showToast,
-    importRecords, showToast,
   } = useHealth();
   const { t } = useI18n();
 
