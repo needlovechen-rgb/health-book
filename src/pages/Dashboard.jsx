@@ -5,9 +5,11 @@ import ChartPanel from '../components/chart/ChartPanel';
 import RecordTable from '../components/table/RecordTable';
 import MemberSelector from '../components/shared/MemberSelector';
 import { useHealth } from '../context/HealthContext';
+import { useI18n } from '../context/I18nContext';
 
 export default function Dashboard() {
   const { records, currentMember } = useHealth();
+  const { t, toggleLang, lang } = useI18n();
   const [editRecord, setEditRecord] = useState(null);
 
   return (
@@ -16,11 +18,14 @@ export default function Dashboard() {
       <nav className="navbar">
         <div className="navbar-brand">
           <div className="brand-icon">❤️</div>
-          血壓血糖健康手冊
+          {t('appTitle')}
         </div>
         <div style={{ flex: 1, paddingLeft: 16, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-          {currentMember?.name} · {records.length} 筆紀錄
+          {currentMember?.name} · {records.length} {t('recordsCount')}
         </div>
+        <button className="btn-icon" onClick={toggleLang} style={{ marginRight: 8, fontSize: '0.9rem', padding: '4px 8px', borderRadius: 4, background: 'var(--bg-secondary)' }}>
+          {t('switchLang')}
+        </button>
         <MemberSelector />
       </nav>
 
@@ -38,8 +43,8 @@ export default function Dashboard() {
         {/* 主區域：圖表 + 表格 */}
         <main className="content-area">
           <div>
-            <div className="section-title">📈 趨勢圖表</div>
-            <div className="section-sub">選擇日 / 週 / 月 / 年 觀看量測趨勢，點 ‹ › 切換期間</div>
+            <div className="section-title">📈 {t('trendChart')}</div>
+            <div className="section-sub">{t('trendChartSub')}</div>
             <ChartPanel />
           </div>
           <RecordTable onEdit={r => { setEditRecord(r); window.scrollTo({ top: 0, behavior: 'smooth' }); }} />

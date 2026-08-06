@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useHealth } from '../../context/HealthContext';
 import { getBPStatus, getHRStatus, getBGStatus } from '../../utils/ranges';
+import { useI18n } from '../../context/I18nContext';
 import Tooltip from '../shared/Tooltip';
 
 const PAGE_SIZE = 20;
@@ -16,6 +17,7 @@ const COLS = [
 
 export default function RecordTable({ onEdit }) {
   const { records, deleteRecord, showToast } = useHealth();
+  const { t } = useI18n();
   const [page, setPage]             = useState(1);
   const [sortKey, setSortKey]       = useState('datetime');
   const [sortDir, setSortDir]       = useState('desc');
@@ -46,9 +48,9 @@ export default function RecordTable({ onEdit }) {
   };
 
   const handleDelete = id => {
-    if (confirm('確定刪除此筆紀錄？')) {
+    if (confirm(t('confirmDelete'))) {
       deleteRecord(id);
-      showToast('紀錄已刪除');
+      showToast(t('deleted'));
     }
   };
 
@@ -59,20 +61,20 @@ export default function RecordTable({ onEdit }) {
       {/* 工具列 */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <div className="section-title" style={{ marginBottom: 0, flex: 1 }}>
-          📋 量測紀錄
+          {t('recordsTitle')}
           <span style={{ fontSize: '0.75rem', fontWeight: 400, color: 'var(--text-muted)' }}>
-            共 {filtered.length} 筆
+            {t('total')} {filtered.length} {t('countUnit')}
           </span>
         </div>
         <input
           className="form-input"
           style={{ width: 180, padding: '6px 10px', fontSize: '0.82rem' }}
-          placeholder="🔍 搜尋備註或日期..."
+          placeholder={t('searchHint')}
           value={search}
           onChange={e => { setSearch(e.target.value); setPage(1); }}
         />
         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-          （匯出請點右上角 👤）
+          {t('exportHint')}
         </span>
       </div>
 
@@ -80,7 +82,7 @@ export default function RecordTable({ onEdit }) {
       {pageData.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">📭</div>
-          <p>尚無量測紀錄，請在左側輸入第一筆資料</p>
+          <p>{t('noRecords')}</p>
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
@@ -89,10 +91,10 @@ export default function RecordTable({ onEdit }) {
               <tr>
                 {COLS.map(c => (
                   <th key={c.key} onClick={() => handleSort(c.key)}>
-                    {c.label}{sortIcon(c.key)}
+                    {t(c.key)}{sortIcon(c.key)}
                   </th>
                 ))}
-                <th>操作</th>
+                <th>{t('action')}</th>
               </tr>
             </thead>
             <tbody>
@@ -120,7 +122,7 @@ export default function RecordTable({ onEdit }) {
                     <td>
                       {r.bloodSugar
                         ? <><span className="val-bg-sugar">{r.bloodSugar}</span>
-                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}> mg/dL {r.mealType === 'postMeal' ? '(飯後)' : '(空腹)'}</span></>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}> mg/dL {r.mealType === 'postMeal' ? `(${t('postMeal')})` : `(${t('fasting')})`}</span></>
                         : <span className="val-muted">—</span>}
                     </td>
                     <td>
@@ -133,7 +135,7 @@ export default function RecordTable({ onEdit }) {
                     <td>
                       <div style={{ display: 'flex', gap: 4 }}>
                         <button className="btn btn-ghost" style={{ padding: '3px 8px', fontSize: '0.75rem' }}
-                          onClick={() => onEdit(r)}>編輯</button>
+                          onClick={() => onEdit(r)}>{t('edit')}</button>
                         <button className="btn btn-danger-ghost"
                           onClick={() => handleDelete(r.id)}>✕</button>
                       </div>

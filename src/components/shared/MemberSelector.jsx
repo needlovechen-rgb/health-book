@@ -1,13 +1,15 @@
 import { useState, useRef } from 'react';
 import { useHealth } from '../../context/HealthContext';
 import { exportCSV, exportJSON, importJSON } from '../../utils/storage';
-
+import { useI18n } from '../../context/I18nContext';
 export default function MemberSelector() {
   const {
     members, currentMemberId, currentMember, records,
     addMember, renameMember, deleteMember, switchMember,
     importRecords, showToast,
+    importRecords, showToast,
   } = useHealth();
+  const { t } = useI18n();
 
   const [open, setOpen]       = useState(false);
   const [adding, setAdding]   = useState(false);
@@ -19,7 +21,7 @@ export default function MemberSelector() {
     if (!newName.trim()) return;
     addMember(newName.trim());
     setNewName(''); setAdding(false);
-    showToast(`已新增成員「${newName.trim()}」`);
+    showToast(`${t('addedUser')}「${newName.trim()}」`);
   };
 
   const handleRename = () => {
@@ -30,9 +32,9 @@ export default function MemberSelector() {
   };
 
   const handleDelete = (id, name) => {
-    if (!confirm(`確定刪除成員「${name}」及其所有紀錄？`)) return;
+    if (!confirm(`${t('confirmDelete')}「${name}」?`)) return;
     deleteMember(id);
-    showToast(`已刪除成員「${name}」`);
+    showToast(`${t('deletedUser')}「${name}」`);
   };
 
   const handleImport = async (e) => {
@@ -41,9 +43,9 @@ export default function MemberSelector() {
     try {
       const imported = await importJSON(file);
       const count = importRecords(imported);
-      showToast(`成功匯入 ${count} 筆新紀錄 ✓`);
+      showToast(`${t('importSuccess')} ${count} ✓`);
     } catch (err) {
-      showToast('匯入失敗：' + err.message, 'err');
+      showToast(`${t('importFailed')}: ` + err.message, 'err');
     }
     fileRef.current.value = '';
     setOpen(false);
@@ -58,7 +60,7 @@ export default function MemberSelector() {
         onClick={() => setOpen(o => !o)}
       >
         <span>👤</span>
-        <span>{currentMember?.name ?? '我'}</span>
+        <span>{currentMember?.name ?? ''}</span>
         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>▾</span>
       </button>
 
@@ -89,8 +91,8 @@ export default function MemberSelector() {
                       onChange={e => setEditing(ed => ({ ...ed, name: e.target.value }))}
                       onKeyDown={e => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') setEditing(null); }}
                     />
-                    <button className="btn-icon" onClick={handleRename} title="確認">✓</button>
-                    <button className="btn-icon" onClick={() => setEditing(null)} title="取消">✕</button>
+                    <button className="btn-icon" onClick={handleRename} title={t('confirm')}>✓</button>
+                    <button className="btn-icon" onClick={() => setEditing(null)} title={t('cancel')}>✕</button>
                   </>
                 ) : (
                   <>
@@ -102,9 +104,9 @@ export default function MemberSelector() {
                     >
                       {m.id === currentMemberId ? '● ' : '○ '}{m.name}
                     </button>
-                    <button className="btn-icon" title="改名" onClick={() => setEditing({ id: m.id, name: m.name })}>✏️</button>
+                    <button className="btn-icon" title={t('edit')} onClick={() => setEditing({ id: m.id, name: m.name })}>✏️</button>
                     {members.length > 1 && (
-                      <button className="btn-icon" title="刪除" onClick={() => handleDelete(m.id, m.name)}
+                      <button className="btn-icon" title={t('delete')} onClick={() => handleDelete(m.id, m.name)}
                         style={{ color: 'var(--danger)' }}>✕</button>
                     )}
                   </>
@@ -121,7 +123,7 @@ export default function MemberSelector() {
                   autoFocus
                   className="form-input"
                   style={{ flex: 1, padding: '4px 8px', fontSize: '0.85rem' }}
-                  placeholder="成員姓名"
+                  placeholder={t('name')}
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') handleAdd(); if (e.key === 'Escape') setAdding(false); }}
@@ -133,7 +135,7 @@ export default function MemberSelector() {
                 className="nav-btn"
                 style={{ width: '100%', textAlign: 'left', padding: '7px 14px', color: 'var(--accent)' }}
                 onClick={() => setAdding(true)}
-              >+ 新增成員</button>
+              >+ {t('addUser')}</button>
             )}
 
             <div style={{ height: 1, background: 'var(--border)', margin: '6px 0' }} />
@@ -142,15 +144,15 @@ export default function MemberSelector() {
             <div style={{ padding: '4px 8px', display: 'flex', flexDirection: 'column', gap: 2 }}>
               <button className="nav-btn" style={{ textAlign: 'left' }}
                 onClick={() => { exportCSV(records, currentMember?.name); setOpen(false); }}>
-                📄 匯出 CSV
+                📄 {t('exportCSV')}
               </button>
               <button className="nav-btn" style={{ textAlign: 'left' }}
                 onClick={() => { exportJSON(records, currentMember?.name); setOpen(false); }}>
-                📦 匯出 JSON
+                📦 {t('exportJSON')}
               </button>
               <button className="nav-btn" style={{ textAlign: 'left' }}
                 onClick={() => fileRef.current.click()}>
-                📥 匯入 JSON
+                📥 {t('importJSON')}
               </button>
               <input ref={fileRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} />
             </div>

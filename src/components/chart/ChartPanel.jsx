@@ -6,18 +6,19 @@ import {
 } from 'recharts';
 import { useHealth } from '../../context/HealthContext';
 import { getAggregated, navigators } from '../../utils/aggregation';
+import { useI18n } from '../../context/I18nContext';
 
 const MODES = [
-  { key: 'day',   label: '日' },
-  { key: 'week',  label: '週' },
-  { key: 'month', label: '月' },
-  { key: 'year',  label: '年' },
+  { key: 'day',   labelKey: 'day' },
+  { key: 'week',  labelKey: 'week' },
+  { key: 'month', labelKey: 'month' },
+  { key: 'year',  labelKey: 'year' },
 ];
 
 const CHART_TYPES = [
-  { key: 'bp',   label: '血壓' },
-  { key: 'hr',   label: '心跳' },
-  { key: 'bg',   label: '血糖' },
+  { key: 'bp',   labelKey: 'bloodPressure' },
+  { key: 'hr',   labelKey: 'heartRate' },
+  { key: 'bg',   labelKey: 'bloodSugar' },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -48,6 +49,7 @@ const generateTicks = (min, max, step = 5) => {
 
 export default function ChartPanel() {
   const { records } = useHealth();
+  const { t } = useI18n();
   const [mode, setMode]         = useState('day');
   const [chartType, setChartType] = useState('bp');
   const [refDate, setRefDate]   = useState(new Date());
@@ -64,16 +66,16 @@ export default function ChartPanel() {
           {MODES.map(m => (
             <button key={m.key} className={`chart-tab${mode === m.key ? ' active' : ''}`}
               onClick={() => { setMode(m.key); setRefDate(new Date()); }}>
-              {m.label}
+              {t(m.labelKey)}
             </button>
           ))}
         </div>
         {/* 圖表類型切換 */}
         <div className="chart-type-tabs">
-          {CHART_TYPES.map(t => (
-            <button key={t.key} className={`chart-type-btn${chartType === t.key ? ' active' : ''}`}
-              onClick={() => setChartType(t.key)}>
-              {t.label}
+          {CHART_TYPES.map(typeItem => (
+            <button key={typeItem.key} className={`chart-type-btn${chartType === typeItem.key ? ' active' : ''}`}
+              onClick={() => setChartType(typeItem.key)}>
+              {t(typeItem.labelKey)}
             </button>
           ))}
         </div>
@@ -86,7 +88,7 @@ export default function ChartPanel() {
         <button className="btn btn-ghost"
           onClick={() => setRefDate(nav.next(refDate))}
           disabled={nav.next(refDate) > today}>›</button>
-        <button className="btn btn-ghost" onClick={() => setRefDate(new Date())}>今</button>
+        <button className="btn btn-ghost" onClick={() => setRefDate(new Date())}>{t('todayBtn')}</button>
       </div>
 
       {/* 圖表 */}
@@ -100,12 +102,12 @@ export default function ChartPanel() {
             <YAxis domain={[40, 200]} ticks={generateTicks(40, 200, 5)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
             <Legend wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }} />
             <ReferenceLine y={140} stroke="var(--danger)" strokeDasharray="4 3"
-              label={{ value: '高血壓', fill: 'var(--danger)', fontSize: 10, position: 'right' }} />
+              label={{ value: t('highBp'), fill: 'var(--danger)', fontSize: 10, position: 'right' }} />
             <ReferenceLine y={120} stroke="var(--warn)" strokeDasharray="4 3"
-              label={{ value: '偏高', fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
-            <Line type="monotone" dataKey="systolic"  name="收縮壓" stroke="var(--systolic)"
+              label={{ value: t('high'), fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
+            <Line type="monotone" dataKey="systolic"  name={t('systolic')} stroke="var(--systolic)"
               strokeWidth={2.5} dot={{ r: 3 }} connectNulls activeDot={{ r: 5 }} />
-            <Line type="monotone" dataKey="diastolic" name="舒張壓" stroke="var(--diastolic)"
+            <Line type="monotone" dataKey="diastolic" name={t('diastolic')} stroke="var(--diastolic)"
               strokeWidth={2.5} dot={{ r: 3 }} connectNulls activeDot={{ r: 5 }} />
           </>}
 
@@ -113,10 +115,10 @@ export default function ChartPanel() {
             <YAxis domain={[40, 160]} ticks={generateTicks(40, 160, 5)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
             <Legend wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }} />
             <ReferenceLine y={100} stroke="var(--warn)" strokeDasharray="4 3"
-              label={{ value: '偏高', fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
+              label={{ value: t('high'), fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
             <ReferenceLine y={60} stroke="var(--warn)" strokeDasharray="4 3"
-              label={{ value: '偏低', fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
-            <Line type="monotone" dataKey="heartRate" name="心跳(bpm)" stroke="var(--hr-color)"
+              label={{ value: t('low'), fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
+            <Line type="monotone" dataKey="heartRate" name={`${t('heartRate')} (bpm)`} stroke="var(--hr-color)"
               strokeWidth={2.5} dot={{ r: 3 }} connectNulls activeDot={{ r: 5 }} />
           </>}
 
@@ -124,10 +126,10 @@ export default function ChartPanel() {
             <YAxis domain={[60, 250]} ticks={generateTicks(60, 250, 5)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
             <Legend wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }} />
             <ReferenceLine y={126} stroke="var(--danger)" strokeDasharray="4 3"
-              label={{ value: '糖尿病', fill: 'var(--danger)', fontSize: 10, position: 'right' }} />
+              label={{ value: t('diabetes'), fill: 'var(--danger)', fontSize: 10, position: 'right' }} />
             <ReferenceLine y={100} stroke="var(--warn)" strokeDasharray="4 3"
-              label={{ value: '空腹偏高', fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
-            <Line type="monotone" dataKey="bloodSugar" name="血糖(mg/dL)" stroke="var(--bg-sugar)"
+              label={{ value: t('fastingHigh'), fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
+            <Line type="monotone" dataKey="bloodSugar" name={`${t('bloodSugar')} (mg/dL)`} stroke="var(--bg-sugar)"
               strokeWidth={2.5} dot={{ r: 3 }} connectNulls activeDot={{ r: 5 }} />
           </>}
         </ComposedChart>
@@ -136,7 +138,7 @@ export default function ChartPanel() {
       {/* 無資料提示 */}
       {data.every(d => d.count === 0) && (
         <div className="empty-state" style={{ padding: '20px 0 8px' }}>
-          <p>此期間無量測紀錄</p>
+          <p>{t('noDataForPeriod')}</p>
         </div>
       )}
     </div>

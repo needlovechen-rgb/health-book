@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNow, formatLocalDatetime } from '../../hooks/useNow';
 import { useHealth } from '../../context/HealthContext';
+import { useI18n } from '../../context/I18nContext';
 
 const EMPTY = {
   datetime: '',
@@ -12,22 +13,23 @@ const EMPTY = {
   note: '',
 };
 
-function validate(form) {
+function validate(form, t) {
   const errors = {};
   if (!form.systolic || +form.systolic < 60 || +form.systolic > 250)
-    errors.systolic = '收縮壓應在 60–250 mmHg';
+    errors.systolic = t('sysErr');
   if (!form.diastolic || +form.diastolic < 40 || +form.diastolic > 150)
-    errors.diastolic = '舒張壓應在 40–150 mmHg';
+    errors.diastolic = t('diaErr');
   if (!form.heartRate || +form.heartRate < 30 || +form.heartRate > 220)
-    errors.heartRate = '心跳應在 30–220 bpm';
+    errors.heartRate = t('hrErr');
   if (form.bloodSugar && (+form.bloodSugar < 20 || +form.bloodSugar > 600))
-    errors.bloodSugar = '血糖應在 20–600 mg/dL';
+    errors.bloodSugar = t('bgErr');
   return errors;
 }
 
 export default function EntryForm({ editRecord, onEditDone }) {
   const now = useNow();
   const { addRecord, updateRecord, showToast } = useHealth();
+  const { t } = useI18n();
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
   const [noteVisible, setNoteVisible] = useState(false);
@@ -63,7 +65,7 @@ export default function EntryForm({ editRecord, onEditDone }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const errs = validate(form);
+    const errs = validate(form, t);
     if (Object.keys(errs).length) { setErrors(errs); return; }
 
     const payload = {
@@ -78,11 +80,11 @@ export default function EntryForm({ editRecord, onEditDone }) {
 
     if (isEdit) {
       updateRecord({ ...editRecord, ...payload });
-      showToast('紀錄已更新 ✓');
+      showToast(t('recordUpdated'));
       onEditDone?.();
     } else {
       addRecord(payload);
-      showToast('量測值已儲存 ✓');
+      showToast(t('recordSaved'));
       setForm({ ...EMPTY, datetime: formatLocalDatetime(new Date()) });
       setUserTouchedTime(false);
     }
@@ -91,13 +93,13 @@ export default function EntryForm({ editRecord, onEditDone }) {
   return (
     <form className="card" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div className="card-title">
-        {isEdit ? '✏️ 編輯紀錄' : '➕ 新增量測'}
+        {isEdit ? t('editRecordTitle') : t('addRecordTitle')}
       </div>
 
       {/* 日期時間 */}
       <div className="form-group">
         <div className="form-label">
-          📅 量測時間
+          {t('measureTime')}
         </div>
         <div className="datetime-group">
           <input
@@ -108,8 +110,8 @@ export default function EntryForm({ editRecord, onEditDone }) {
             style={{ flex: 1 }}
           />
           {!isEdit && (
-            <button type="button" className="datetime-now-badge" onClick={resetTime} title="重設為現在時間">
-              ⏱ 現在
+            <button type="button" className="datetime-now-badge" onClick={resetTime} title={t('now')}>
+              {t('now')}
             </button>
           )}
         </div>
@@ -117,17 +119,17 @@ export default function EntryForm({ editRecord, onEditDone }) {
 
       {/* 血壓 */}
       <div className="form-group">
-        <div className="form-label" style={{ color: 'var(--systolic)' }}>🩸 血壓</div>
+        <div className="form-label" style={{ color: 'var(--systolic)' }}>{t('bloodPressure')}</div>
         <div className="form-row">
           <div className="form-group">
-            <div className="form-label">收縮壓</div>
+            <div className="form-label">{t('systolic')}</div>
             <input type="number" className={`form-input${errors.systolic ? ' err' : ''}`}
               placeholder="120" min={60} max={250}
               value={form.systolic} onChange={e => set('systolic', e.target.value)} />
             {errors.systolic && <span style={{ fontSize: '0.75rem', color: 'var(--danger)' }}>{errors.systolic}</span>}
           </div>
           <div className="form-group">
-            <div className="form-label">舒張壓</div>
+            <div className="form-label">{t('diastolic')}</div>
             <input type="number" className={`form-input${errors.diastolic ? ' err' : ''}`}
               placeholder="80" min={40} max={150}
               value={form.diastolic} onChange={e => set('diastolic', e.target.value)} />
@@ -138,7 +140,7 @@ export default function EntryForm({ editRecord, onEditDone }) {
 
       {/* 心跳 */}
       <div className="form-group">
-        <div className="form-label" style={{ color: 'var(--hr-color)' }}>💓 心跳</div>
+        <div className="form-label" style={{ color: 'var(--hr-color)' }}>💓 {t('heartRate')}</div>
         <input type="number" className={`form-input${errors.heartRate ? ' err' : ''}`}
           placeholder="72" min={30} max={220}
           value={form.heartRate} onChange={e => set('heartRate', e.target.value)} />
@@ -147,14 +149,14 @@ export default function EntryForm({ editRecord, onEditDone }) {
 
       {/* 血糖 */}
       <div className="form-group">
-        <div className="form-label" style={{ color: 'var(--bg-sugar)' }}>🍬 血糖（選填）</div>
+        <div className="form-label" style={{ color: 'var(--bg-sugar)' }}>{t('bloodSugarOpt')}</div>
         <div className="form-row">
           <input type="number" className={`form-input${errors.bloodSugar ? ' err' : ''}`}
             placeholder="95 mg/dL" min={20} max={600}
             value={form.bloodSugar} onChange={e => set('bloodSugar', e.target.value)} />
           <select className="form-select" value={form.mealType} onChange={e => set('mealType', e.target.value)}>
-            <option value="fasting">空腹</option>
-            <option value="postMeal">飯後</option>
+            <option value="fasting">{t('fasting')}</option>
+            <option value="postMeal">{t('postMeal')}</option>
           </select>
         </div>
         {errors.bloodSugar && <span style={{ fontSize: '0.75rem', color: 'var(--danger)' }}>{errors.bloodSugar}</span>}
@@ -162,10 +164,10 @@ export default function EntryForm({ editRecord, onEditDone }) {
 
       {/* 備註 */}
       <div className="form-group" style={{ position: 'relative' }}>
-        <div className="form-label">📝 備註（選填）</div>
+        <div className="form-label">{t('noteOpt')}</div>
         <textarea
           className="form-textarea"
-          placeholder="例如：飯後30分鐘量測、稍作休息後、運動後..."
+          placeholder={t('notePlaceholder')}
           value={form.note}
           onChange={e => set('note', e.target.value)}
           onFocus={() => setNoteVisible(true)}
@@ -184,10 +186,10 @@ export default function EntryForm({ editRecord, onEditDone }) {
       {/* 按鈕 */}
       <div style={{ display: 'flex', gap: 8 }}>
         <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
-          {isEdit ? '✓ 儲存修改' : '✓ 儲存量測值'}
+          {isEdit ? t('saveChanges') : t('saveRecord')}
         </button>
         {isEdit && (
-          <button type="button" className="btn btn-ghost" onClick={onEditDone}>取消</button>
+          <button type="button" className="btn btn-ghost" onClick={onEditDone}>{t('cancel')}</button>
         )}
       </div>
     </form>
