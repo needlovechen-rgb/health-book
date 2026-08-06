@@ -20,10 +20,10 @@ export default function Dashboard() {
           <div className="brand-icon">❤️</div>
           {t('appTitle')}
         </div>
-        <div style={{ flex: 1, paddingLeft: 16, fontSize: '0.82rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div style={{ flex: 1, minWidth: 0, paddingLeft: 16, fontSize: '0.82rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {currentMember?.name} · {records.length} {t('recordsCount')}
         </div>
-        <button className="btn btn-ghost" onClick={toggleLang} style={{ marginRight: 8, padding: '4px 8px' }}>
+        <button className="btn btn-ghost" onClick={toggleLang} style={{ flexShrink: 0, marginRight: 8, padding: '4px 8px' }}>
           🌐 {t('switchLang')}
         </button>
         <MemberSelector />
