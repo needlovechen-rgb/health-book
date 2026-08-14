@@ -9,7 +9,7 @@ import { useI18n } from '../context/I18nContext';
 
 export default function Dashboard() {
   const { records, currentMember } = useHealth();
-  const { t, toggleLang, lang } = useI18n();
+  const { t, setLang, lang } = useI18n();
   const [editRecord, setEditRecord] = useState(null);
 
   return (
@@ -23,9 +23,22 @@ export default function Dashboard() {
         <div style={{ flex: 1, minWidth: 0, paddingLeft: 16, fontSize: '0.82rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {currentMember?.name} · {records.length} {t('recordsCount')}
         </div>
-        <button className="btn btn-ghost" onClick={toggleLang} style={{ flexShrink: 0, marginRight: 8, padding: '4px 8px' }}>
-          🌐 {t('switchLang')}
-        </button>
+        <div className="lang-switcher" style={{ marginRight: 8 }}>
+          <button
+            type="button"
+            className={`lang-btn${lang === 'zh' ? ' active' : ''}`}
+            onClick={() => setLang('zh')}
+          >
+            {t('langZh')}
+          </button>
+          <button
+            type="button"
+            className={`lang-btn${lang === 'en' ? ' active' : ''}`}
+            onClick={() => setLang('en')}
+          >
+            {t('langEn')}
+          </button>
+        </div>
         <MemberSelector />
       </nav>
 

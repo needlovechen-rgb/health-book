@@ -71,6 +71,24 @@ const translations = {
     diabetes: '糖尿病',
     fastingHigh: '空腹偏高',
     noDataForPeriod: '此期間無量測紀錄',
+    bpPrefix: '血壓：',
+    hrPrefix: '心跳：',
+    bgPrefix: '血糖：',
+    statusIdeal: '理想',
+    statusNormal: '正常',
+    statusElevated: '偏高',
+    statusStage1: '高血壓一期',
+    statusStage2: '高血壓二期',
+    statusStage3: '高血壓三期',
+    statusAbnormal: '異常',
+    statusWarning: '注意',
+    statusPrediabetes: '糖尿病前期',
+    statusDiabetesRisk: '糖尿病風險',
+    updatedUserName: '成員名稱已更新',
+    importSuccess: '匯入成功',
+    importFailed: '匯入失敗',
+    langZh: '繁體中文',
+    langEn: 'English',
   },
   en: {
     appTitle: 'BP & BG Health Book',
@@ -140,6 +158,24 @@ const translations = {
     diabetes: 'Diabetes',
     fastingHigh: 'Fasting High',
     noDataForPeriod: 'No records for this period',
+    bpPrefix: 'BP: ',
+    hrPrefix: 'HR: ',
+    bgPrefix: 'BS: ',
+    statusIdeal: 'Ideal',
+    statusNormal: 'Normal',
+    statusElevated: 'Elevated',
+    statusStage1: 'Stage 1 HTN',
+    statusStage2: 'Stage 2 HTN',
+    statusStage3: 'Stage 3 HTN',
+    statusAbnormal: 'Abnormal',
+    statusWarning: 'Warning',
+    statusPrediabetes: 'Prediabetes',
+    statusDiabetesRisk: 'Diabetes Risk',
+    updatedUserName: 'Member name updated',
+    importSuccess: 'Import successful',
+    importFailed: 'Import failed',
+    langZh: '繁體中文',
+    langEn: 'English',
   }
 };
 
@@ -159,7 +195,7 @@ export function I18nProvider({ children }) {
   };
 
   return (
-    <I18nContext.Provider value={{ lang, toggleLang, t }}>
+    <I18nContext.Provider value={{ lang, setLang, toggleLang, t }}>
       {children}
     </I18nContext.Provider>
   );

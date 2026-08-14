@@ -37,9 +37,9 @@ export default function StatCard({ records }) {
         )}
       </div>
       <div style={{ marginTop: 10, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-        <span className={`range-badge ${bpStatus.cls}`}>血壓：{bpStatus.label}</span>
-        <span className={`range-badge ${hrStatus.cls}`}>心跳：{hrStatus.label}</span>
-        {bgStatus && <span className={`range-badge ${bgStatus.cls}`}>血糖：{bgStatus.label}</span>}
+        <span className={`range-badge ${bpStatus.cls}`}>{t('bpPrefix')}{t(bpStatus.key || bpStatus.label)}</span>
+        <span className={`range-badge ${hrStatus.cls}`}>{t('hrPrefix')}{t(hrStatus.key || hrStatus.label)}</span>
+        {bgStatus && <span className={`range-badge ${bgStatus.cls}`}>{t('bgPrefix')}{t(bgStatus.key || bgStatus.label)}</span>}
       </div>
     </div>
   );

@@ -16,23 +16,23 @@ export const BG_RANGES = {
 };
 
 export function getBPStatus(sys, dia) {
-  if (sys >= 180 || dia >= 110) return { label: '高血壓三期', cls: 'range-danger' };
-  if (sys >= 160 || dia >= 100) return { label: '高血壓二期', cls: 'range-danger' };
-  if (sys >= 140 || dia >= 90)  return { label: '高血壓一期', cls: 'range-warn' };
-  if (sys >= 130 || dia >= 85)  return { label: '偏高',       cls: 'range-warn' };
-  if (sys >= 120 || dia >= 80)  return { label: '正常',       cls: 'range-ok' };
-  return                                { label: '理想',       cls: 'range-ok' };
+  if (sys >= 180 || dia >= 110) return { key: 'statusStage3', label: '高血壓三期', cls: 'range-danger' };
+  if (sys >= 160 || dia >= 100) return { key: 'statusStage2', label: '高血壓二期', cls: 'range-danger' };
+  if (sys >= 140 || dia >= 90)  return { key: 'statusStage1', label: '高血壓一期', cls: 'range-warn' };
+  if (sys >= 130 || dia >= 85)  return { key: 'statusElevated', label: '偏高',       cls: 'range-warn' };
+  if (sys >= 120 || dia >= 80)  return { key: 'statusNormal', label: '正常',       cls: 'range-ok' };
+  return                                { key: 'statusIdeal', label: '理想',       cls: 'range-ok' };
 }
 
 export function getBGStatus(value, mealType = 'fasting') {
   const range = BG_RANGES[mealType];
-  if (value >= range.warn) return { label: '糖尿病風險', cls: 'range-danger' };
-  if (value >= range.ok)   return { label: '糖尿病前期', cls: 'range-warn' };
-  return                          { label: '正常',       cls: 'range-ok' };
+  if (value >= range.warn) return { key: 'statusDiabetesRisk', label: '糖尿病風險', cls: 'range-danger' };
+  if (value >= range.ok)   return { key: 'statusPrediabetes', label: '糖尿病前期', cls: 'range-warn' };
+  return                          { key: 'statusNormal', label: '正常',       cls: 'range-ok' };
 }
 
 export function getHRStatus(hr) {
-  if (hr < 50 || hr > 120) return { label: '異常',    cls: 'range-danger' };
-  if (hr < 60 || hr > 100) return { label: '注意',    cls: 'range-warn' };
-  return                          { label: '正常',     cls: 'range-ok' };
+  if (hr < 50 || hr > 120) return { key: 'statusAbnormal', label: '異常',    cls: 'range-danger' };
+  if (hr < 60 || hr > 100) return { key: 'statusWarning', label: '注意',    cls: 'range-warn' };
+  return                          { key: 'statusNormal', label: '正常',     cls: 'range-ok' };
 }

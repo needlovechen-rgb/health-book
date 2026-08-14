@@ -27,7 +27,7 @@ export default function MemberSelector() {
     if (!editing.name.trim()) return;
     renameMember(editing.id, editing.name.trim());
     setEditing(null);
-    showToast('成員名稱已更新');
+    showToast(t('updatedUserName'));
   };
 
   const handleDelete = (id, name) => {
