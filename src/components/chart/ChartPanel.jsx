@@ -92,7 +92,7 @@ export default function ChartPanel() {
       </div>
 
       {/* 圖表 */}
-      <ResponsiveContainer width="100%" height={280}>
+      <ResponsiveContainer width="100%" height={320}>
         <ComposedChart data={data} margin={{ top: 8, right: 16, left: -16, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
           <XAxis dataKey="label" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} />
