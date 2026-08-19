@@ -39,7 +39,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-const generateTicks = (min, max, step = 5) => {
+const generateTicks = (min, max, step = 10) => {
   const ticks = [];
   for (let i = min; i <= max; i += step) {
     ticks.push(i);
@@ -99,7 +99,7 @@ export default function ChartPanel() {
           <Tooltip content={<CustomTooltip />} />
 
           {chartType === 'bp' && <>
-            <YAxis domain={[40, 200]} ticks={generateTicks(40, 200, 5)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
+            <YAxis domain={[40, 200]} ticks={generateTicks(40, 200, 10)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
             <Legend wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }} />
             <ReferenceLine y={140} stroke="var(--danger)" strokeDasharray="4 3"
               label={{ value: t('highBp'), fill: 'var(--danger)', fontSize: 10, position: 'right' }} />
@@ -112,7 +112,7 @@ export default function ChartPanel() {
           </>}
 
           {chartType === 'hr' && <>
-            <YAxis domain={[40, 160]} ticks={generateTicks(40, 160, 5)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
+            <YAxis domain={[40, 160]} ticks={generateTicks(40, 160, 10)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
             <Legend wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }} />
             <ReferenceLine y={100} stroke="var(--warn)" strokeDasharray="4 3"
               label={{ value: t('high'), fill: 'var(--warn)', fontSize: 10, position: 'right' }} />
@@ -123,7 +123,7 @@ export default function ChartPanel() {
           </>}
 
           {chartType === 'bg' && <>
-            <YAxis domain={[60, 250]} ticks={generateTicks(60, 250, 5)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
+            <YAxis domain={[60, 250]} ticks={generateTicks(60, 250, 10)} interval={0} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
             <Legend wrapperStyle={{ fontSize: '0.78rem', paddingTop: 8 }} />
             <ReferenceLine y={126} stroke="var(--danger)" strokeDasharray="4 3"
               label={{ value: t('diabetes'), fill: 'var(--danger)', fontSize: 10, position: 'right' }} />
